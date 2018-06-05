@@ -1,0 +1,31 @@
+﻿<script src="~/scripts/moment.min.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#DOJ").datepicker({ dateFormat: 'dd/mm/yy' });
+        $("#DOR").datepicker({ dateFormat: 'dd/mm/yy' });
+        $.validator.methods.date = function (value, element) {
+            return this.optional(element) || moment(value, "DD/MM/YYYY", true).isValid();
+        }
+        jQuery.validator.addMethod(
+            'date',
+            function (value, element, params) {
+                if (this.optional(element)) {
+                    return true;
+                };
+                var result = false;
+                try {
+                    $.datepicker.parseDate('dd/mm/yy', value);
+                    result = true;
+                } catch (err) {
+                    result = false;
+                }
+                return result;
+            },
+            ''
+        );
+        
+    });
+
+</script>

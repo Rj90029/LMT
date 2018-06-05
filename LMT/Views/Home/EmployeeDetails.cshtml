@@ -1,0 +1,140 @@
+﻿@model LMT.Models.Model.Employee
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="~/Content/LMTStyle.css">
+</head>
+<body>
+    <div class="container center_div">
+        <div class="row">
+            <div class="col-md-8"><h2 style="text-align:center;">Employee Details</h2></div>
+            @if (Session["LoggedIn"] != null)
+            {
+                <div class="col-md-2 col-md-offset-2 " style="margin-top:15px;">
+                    <input type="button" value="Logout" style="width:60px;" onclick="window.location.href = '@Url.Action("Logout","Login")'" />
+                </div>
+            }
+        </div>
+        <table class="table">
+        
+            <tbody>
+                <tr>
+                    <td>
+                        @Html.DisplayNameFor(model => model.EmpId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.EmpId)
+                    </td>
+                </tr>
+                <tr>
+
+                    <td>
+                        @Html.DisplayNameFor(model => model.Attuid)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(model => model.Attuid)
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-1 ">
+                        @Html.DisplayNameFor(model => model.Name)
+                    </td>
+
+                    <td class="col-md-3 col-md-offset-1">
+                        @Html.DisplayFor(model => model.Name)
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        @Html.DisplayNameFor(model => model.Phone)
+                    </td>
+
+
+                    <td class="col-md-10 col-md-offset-2">
+                        @Html.DisplayFor(model => model.Phone)
+                    </td>
+                </tr>
+                <tr>
+
+                    <td>
+                        @Html.DisplayNameFor(model => model.Email)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(model => model.Email)
+                    </td>
+                </tr>
+                <tr>
+
+                    <td>
+                        @Html.DisplayNameFor(model => model.DOJ)
+                    </td>
+
+                    <td>
+                        @Model.DOJ
+                    </td>
+                </tr>
+                @if (Model.DOR.ToString() != "1/1/2099")
+                {
+                    <tr>
+
+                        <td>
+                            @Html.DisplayNameFor(model => model.DOR)
+                        </td>
+
+                        <td>
+                            @Model.DOR
+                        </td>
+                    </tr>
+                }
+                <tr>
+
+                    <td>
+                        @Html.DisplayNameFor(model => model.SuppApp)
+                    </td>
+
+                    <td>
+                        @string.Join(" , ", Model.SuppApp)
+                    </td>
+                </tr>
+                <tr>
+
+                    <td>
+                        @Html.DisplayNameFor(model => model.Competency)
+                    </td>
+
+                    <td>
+                        @string.Join(" , ", Model.Competency)
+                    </td>
+                </tr>
+
+                <tr>
+
+                    <td>
+                        @Html.DisplayNameFor(model => model.Designation)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(model => model.Designation)
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p style="text-align:center">
+            @Html.ActionLink("Add", "UpdateEmployee")  |
+            @Html.ActionLink("Update", "UpdateEmployee", new { name = Model.Name })
+        </p>
+    </div>
+</body>
+</html>

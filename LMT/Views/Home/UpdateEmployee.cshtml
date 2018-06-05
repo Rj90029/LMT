@@ -1,0 +1,165 @@
+﻿@model LMT.Models.Model.Employee
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+
+@using (Html.BeginForm("UpdateEmployee", "Home", String.IsNullOrEmpty(Model.Name) ? new { target = "Add" } : new { target = "Update" }, FormMethod.Post,new { id ="Update"}))
+{
+    @Html.AntiForgeryToken()
+
+    bool disable = String.IsNullOrEmpty(Model.Name) ? false : true;
+    string target = String.IsNullOrEmpty(Model.Name) ? "Add" : "Update";
+
+    <div class="container center_div update">
+        <div class="row">
+            <div class="col-md-8"><h2 style="text-align:center;">@target Employee Details</h2></div>
+
+            @if (Session["LoggedIn"] != null)
+            {
+                <div class="col-md-1 col-md-offset-2 " style="margin-top:15px;">
+                    <input type="button" value="Logout" style="width:60px;" onclick="window.location.href = '@Url.Action("Logout","Login")'" />
+                </div>
+            }
+        </div>
+        <hr/>
+        <div class="form-horizontal">
+            <p class="alert-danger">@ViewBag.result<p />
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-3">
+                    @Html.TextBoxFor(model => model.Name, disable ? new { @readonly = "readonly" } : null)
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.EmpId, htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-6 col-md-offset-1">
+
+                    @Html.TextBoxFor(model => model.EmpId, disable ? new { @readonly = "readonly"} : null)
+                    @Html.ValidationMessageFor(model => model.EmpId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.Attuid, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-6 col-md-offset-1">
+                    @Html.TextBoxFor(model => model.Attuid, disable ? new { @readonly = "readonly" } : null)
+                    @Html.ValidationMessageFor(model => model.Attuid, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-6 col-md-offset-1">
+                    @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-6 col-md-offset-1">
+                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.DOJ, htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-6 col-md-offset-1">
+                    @Html.EditorFor(model => model.DOJ, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.DOJ, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.DOR, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-6 col-md-offset-1">
+                    @Html.EditorFor(model => model.DOR, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.DOR, "", new { @class = "text-danger" })
+                    <div id="DORinput" class="text-danger"></div>
+                </div>
+            </div>
+
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.Competency, htmlAttributes: new { @class = "control-label col-md-4" })
+                <div class="col-md-6 col-md-offset-1 ">
+                    @Html.ListBoxFor(model => model.Competency, (MultiSelectList)ViewBag.CompetencyList)
+                    @Html.ValidationMessageFor(model => model.Competency, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.SuppApp, htmlAttributes: new { @class = "control-label col-md-4" })
+                <div class="col-md-6 col-md-offset-1 ">
+                    @Html.ListBoxFor(model => model.SuppApp, (MultiSelectList)ViewBag.AppListX)
+                    @Html.ValidationMessageFor(model => model.SuppApp, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Designation, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.Designation, (SelectList)ViewBag.DesigList, "Select Designation")
+
+                    @Html.ValidationMessageFor(model => model.Designation, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-8 col-md-4">
+                    <input type="submit" value="@target Details" onclick="validate();" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+        
+    </div>
+}
+
+
+@Html.Partial("PartialDateEntry")
+<script>
+    $(document).ready(function () {
+        var result = "@ViewBag.Result";
+        if (result != "")
+        {
+            setTimeout(function() {
+                window.location.href = '@Url.Action("Dashboard","Home")';
+            }, 3000);
+        }
+
+    });
+    $("#DOR").change(function () {
+        $("#DORinput").text("");
+        var dor = $("#DOR").val().split("/");
+        var doj = $("#DOJ").val().split("/");
+        var dorDate = new Date(dor[2], dor[1] - 1, dor[0]);
+        var dojDate = new Date(doj[2], doj[1] - 1, doj[0]);
+        if (dorDate < dojDate)
+            $("#DORinput").text("DOR should be greater than DOJ");
+    });
+    $("#Update").submit(function (event) {
+
+        $("#DORinput").text("");
+        var dor = $("#DOR").val().split("/");
+        var doj = $("#DOJ").val().split("/");
+        var dorDate = new Date(dor[2], dor[1] - 1, dor[0]);
+        var dojDate = new Date(doj[2], doj[1] - 1, doj[0]);
+        if (dorDate < dojDate) {
+            $("#DOR").focus();
+            event.preventDefault();
+        } 
+    });
+</script>

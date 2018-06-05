@@ -1,0 +1,70 @@
+﻿@model IEnumerable<LMT.Models.Model.LeaveStatus>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="~/Content/LMTStyle.css">
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css" />
+    <script src="~/scripts/bootstrap.min.js"></script>
+   
+</head>
+<body>
+    <form method="post">
+        <div class="container center_div">
+            <div class="row">
+                <div class="col-md-8"><h2 style="text-align:center;">Employee Request Status</h2></div>
+                @if (Session["LoggedIn"] != null)
+            {
+                    <div class="col-md-2 col-md-offset-2 " style="margin-top:15px;">
+                        <input type="button" value="Logout" style="width:60px;" onclick="window.location.href = '@Url.Action("Logout","Login")'" />
+                    </div>
+                }
+            </div>
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Name)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.VacationType)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.VacationDate)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Status)
+                        </th>
+                    </tr>
+                </thead>
+                @foreach (var item in Model)
+            {
+                    <tbody>
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.VacationType)
+                            </td>
+                            <td>
+                                @item.VacationDate
+                            </td>
+                            <td>
+                                <a href='@Url.Action("UserEntry", "Home", new { user = item.Name.Replace(" ","%20"), date = item.VacationDate }, null)'>
+                                    @Html.DisplayFor(modelItem => item.Status)
+                                </a>
+
+                            </td>
+
+                        </tr>
+                    </tbody>
+                }
+
+            </table>
+        </div>
+
+    </form>
+</body>
+</html>

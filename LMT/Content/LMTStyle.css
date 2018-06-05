@@ -1,0 +1,64 @@
+﻿
+.center_div{
+    margin: 0 auto;
+    width:60% ;
+    height:96%;
+    border:solid;
+    border-width: 8px;
+    border-color:darkgray;
+    background-color:aliceblue;
+    
+}
+.h2{
+    text-align:center;
+}
+.logintxt{
+    font-size:14px;
+    text-align:center;
+}
+.login_div{
+    margin-left:40%;
+    width:80% ;
+}
+.un{
+    text-decoration-color:deepskyblue;
+}
+.thick
+{
+    font-weight: bold;
+    font-size:16px;
+    
+}
+.button{
+    color:black; 
+    width:100px;
+     height: 30px;
+     margin-top:20px;
+     margin-left:40px;
+     margin-bottom:20px;
+}
+.Entry label {
+    width:9.5%;
+    padding:1%;
+}
+.Entry checkbox {
+    padding:1%;
+}
+.UserHead {
+    font-weight:bold;
+    font-size:14px;
+    background-color:#eee;
+    padding:5px;
+    margin-bottom:10px;
+    padding-left:10px;
+}
+.Week {
+    display:inline;
+    width:12%;
+    text-align:center;
+    font-weight:bold;
+    
+}
+.update input{padding:3px;width:150px;}
+.update .control-label{text-align:left;}
+

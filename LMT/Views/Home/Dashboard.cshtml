@@ -1,0 +1,95 @@
+﻿@model IEnumerable<LMT.Models.Model.Dashboard>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="center_div">
+    <div class="row">
+        <div class="col-md-8"><h2 style="text-align:center;">Dashboard</h2></div>
+        @if (Session["Role"].ToString() == "DM")
+        {
+            <div class="col-md-1" style="margin-top:15px;">
+                <input type="button" value="Worklist" onclick="window.location.href = '@Url.Action("LeaveStatus","Home")'" />
+            </div>
+        }
+        @if (Session["LoggedIn"] != null)
+            {
+            <div class="col-md-2 col-md-offset-1 " style="margin-top:15px;">
+                <input type="button" value="Logout" style="width:60px;" onclick="window.location.href = '@Url.Action("Logout","Login")'" />
+            </div>
+        }
+        </div>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ContactNumber)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Session["Role"].ToString() == "DM")
+            {
+                foreach (var item in Model)
+                {
+                        <tr class="clickable-row" style="cursor:pointer;">
+                            <td class="user-name">
+                                @Html.DisplayFor(model => item.Name)
+                            </td>
+                            <td class="contact">
+                                @Html.DisplayFor(model => item.ContactNumber)
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    foreach (var item in Model)
+                    {
+                        if (Session["Name"].ToString() == item.Name)
+                        {
+                            <tr class="clickable-row" style="cursor:pointer;background-color:#c0f5f5;">
+                                <td class="user-name">
+                                    @Html.DisplayFor(model => item.Name)
+                                </td>
+                                <td class="contact">
+                                    @Html.DisplayFor(model => item.ContactNumber)
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td class="user-name">
+                                    @Html.DisplayFor(model => item.Name)
+                                </td>
+                                <td class="contact">
+                                    @Html.DisplayFor(model => item.ContactNumber)
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+<script type="text/javascript">
+    $('.clickable-row').click(function () {
+
+        var user = $.trim($(this).find('td.user-name').text()).replace(" ","%20");
+        var role = "@Session["Role"]";
+        if (role == "DM") {
+            var url = "@Url.Action("EmployeeDetails","Home")";
+            window.location.href = url + "?user=" + user;
+        } else {
+            var url = "@Url.Action("UserEntry", "Home")";
+            window.location.href = url + "?user=" + user;
+        }
+    })
+</script>

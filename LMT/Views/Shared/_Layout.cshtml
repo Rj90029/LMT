@@ -1,0 +1,29 @@
+﻿@using System.Web.Optimization
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    
+   
+    <script src="~/scripts/jquery-2.2.1.min.js"></script>
+    <script src="~/scripts/jquery-ui-1.12.1.min.js"></script>
+    <script src="~/scripts/bootstrap.min.js"></script>
+    <script src="~/scripts/jquery.validate.min.js"></script>
+    <script src="~/scripts/jquery.validate.unobtrusive.js"></script>
+    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+   
+    <link href="~/Content/LMTStyle.css" rel="stylesheet"/>
+    <title>LMT</title>
+</head>
+<body>
+    <div class="container"> 
+        @RenderBody()
+    </div>
+
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
