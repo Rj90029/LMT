@@ -49,24 +49,38 @@ namespace LMT.Services
 
         }
 
-        public void ResetPassword(ResetPassword model)
+        public string ResetPassword(ResetPassword model)
         {
             EmployeeEntityTableAdapters.USERSTableAdapter usersTableAdapter = new EmployeeEntityTableAdapters.USERSTableAdapter();
             EmployeeEntityTableAdapters.EMPLOYEETableAdapter employeeTableAdapter = new EmployeeEntityTableAdapters.EMPLOYEETableAdapter();
             EmployeeEntity context = new EmployeeEntity();
             usersTableAdapter.Fill(context.USERS);
             employeeTableAdapter.Fill(context.EMPLOYEE);
-
-            string emp_id = (from e in context.EMPLOYEE
+            string old_pwd = (from e in context.EMPLOYEE
+                              join u in context.USERS
+                                        on e.EMP_ID equals u.EMP_ID
                              where e.EMPNAME == model.UserName
-                             select e.EMP_ID).First<string>();
-            string con = ConfigurationManager.ConnectionStrings["TrackerConnectionString"].ToString();
-            OleDbConnection conn = new OleDbConnection(con);
-            conn.Open();
-            string command = "Update [USERS] SET [PASSWORD] ='" + model.Password + "' Where EMP_ID='" + emp_id + "'";
-            OleDbCommand cmd = new OleDbCommand(command,conn);
-            cmd.ExecuteNonQuery();
-            conn.Close();
+                              select u.PASSWORD).First<string>();
+            string status = "";
+            if(old_pwd == model.LastPassword)
+            {
+                string emp_id = (from e in context.EMPLOYEE
+                                 where e.EMPNAME == model.UserName
+                                 select e.EMP_ID).First<string>();
+                string con = ConfigurationManager.ConnectionStrings["TrackerConnectionString"].ToString();
+                OleDbConnection conn = new OleDbConnection(con);
+                conn.Open();
+                string command = "Update [USERS] SET [PASSWORD] ='" + model.Password + "' Where EMP_ID='" + emp_id + "'";
+                OleDbCommand cmd = new OleDbCommand(command, conn);
+                cmd.ExecuteNonQuery();
+                conn.Close();
+                status = "Password Reset Successfull.";
+            }
+            else
+            {
+                status = "One of the password you entered does not match!";
+            }
+            return status;
         }
     }
 }

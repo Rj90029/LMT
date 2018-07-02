@@ -73,7 +73,7 @@ namespace LMT.Controllers
 
       
 
-        public ActionResult UserEntry(string user, string date)
+        public ActionResult UserEntry(string user, string date,string status)
         {
             UserEntryServices userEntryServices = new UserEntryServices();
             UserEntry userEntry = new UserEntry();
@@ -112,7 +112,7 @@ namespace LMT.Controllers
             };
 
             ViewBag.Status = list;
-
+            ViewBag.Result = status;
             return View(userEntry);
         }
         [HttpPost]
@@ -120,8 +120,8 @@ namespace LMT.Controllers
         {
             UserEntryServices userEntryServices = new UserEntryServices();
             OleDbConnection con = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;" + "Data Source=" + Server.MapPath("~/App_Data/Tracker.accdb"));
-            userEntryServices.InsertLeaves(fc, con);
-            return RedirectToAction("UserEntry", new { user = fc["Name"].Trim(), date = fc["WeekendSelected"] });
+            string status = userEntryServices.InsertLeaves(fc, con);
+            return RedirectToAction("UserEntry", new { user = fc["Name"].Trim(), date = fc["WeekendSelected"],status= status });
         }
         public ActionResult PartialUserEntry(string user, string date)
         {
@@ -159,9 +159,9 @@ namespace LMT.Controllers
         public ActionResult ApproveReject(string user, string date, string type, string act)
         {
             UserEntryServices userEntryServices = new UserEntryServices();
-            userEntryServices.ApproveReject(user.Trim(), date, type, act);
+            string status = userEntryServices.ApproveReject(user.Trim(), date, type, act);
             System.Threading.Thread.Sleep(2000);
-            return RedirectToAction("UserEntry", new { user = user.Trim(),date = date});
+            return RedirectToAction("UserEntry", new { user = user.Trim(),date = date,status = status});
         }
        
     }

@@ -156,17 +156,17 @@ namespace LMT.Services
                 employeeTableAdapter.Insert(emp.EmpId,emp.Phone, emp.Attuid, doj, dor, emp.Email, apps, competency, emp.Designation, emp.Name);
                 if(emp.Designation == "DELIVERY MANAGER")
                 {
-                    string password = emp.Name;
+                    string password = emp.EmpId;
                     usersTableAdapter.Insert(emp.EmpId, password, "DM");
                 }
                 else if (emp.Designation == "SR DELIVERY MANAGER")
                 {
-                    string password = emp.Name;
+                    string password = emp.EmpId;
                     usersTableAdapter.Insert(emp.EmpId, password, "SDM");
                 }
                 else
                 {
-                    string password = emp.Name;
+                    string password = emp.EmpId;
                     usersTableAdapter.Insert(emp.EmpId, password, "USER");
                 }
                 return ("Insert Successful");

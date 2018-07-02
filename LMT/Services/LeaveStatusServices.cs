@@ -18,7 +18,7 @@ namespace LMT.Services
             employTableAdapter.Fill(context.EMPLOYEE);
             employeeTableAdapter.Fill(context.USERENTRY);
             var result = from e in context.USERENTRY join d in context.EMPLOYEE on e.EMP_ID equals d.EMP_ID
-                         orderby e.VACATIONDATE
+                         orderby e.STATUS descending,d.EMPNAME,e.VACATIONDATE
                          select new { Name = d.EMPNAME, vacation = e.VACATIONDATE, status=e.STATUS, vactionType=e.VACATIONTYPE };
 
             foreach (var r in result)

@@ -11,8 +11,12 @@ namespace LMT.Models.Model
         [Required(AllowEmptyStrings = false, ErrorMessage = "Username is required!")]
         [Display(Name = "Employee Name")]
         public string UserName { get; set; }
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Last Password is required!")]
+        [Display(Name = "Last Password")]
+        public string LastPassword { get; set; }
+
         public List<string> UserList { get; set; }
-        [Display(Name = "Password")]
+        [Display(Name = "New Password")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Password is required!")]
         public string Password { get; set; }
         [Display(Name ="Confirm Password")]

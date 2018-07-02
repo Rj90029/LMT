@@ -14,8 +14,9 @@
         <div class="container center_div">
             <div class="row">
                 <div class="col-md-8"><h2 style="text-align:center;">Employee Request Status</h2></div>
+                <div class="col-md-2 col-md-offset-2" style="margin-top:15px"><a href="@Url.Action("Dashboard","Home")">Back To Dashboard</a></div>
                 @if (Session["LoggedIn"] != null)
-            {
+                  {
                     <div class="col-md-2 col-md-offset-2 " style="margin-top:15px;">
                         <input type="button" value="Logout" style="width:60px;" onclick="window.location.href = '@Url.Action("Logout","Login")'" />
                     </div>
@@ -52,7 +53,7 @@
                                 @item.VacationDate
                             </td>
                             <td>
-                                <a href='@Url.Action("UserEntry", "Home", new { user = item.Name.Replace(" ","%20"), date = item.VacationDate }, null)'>
+                                <a href='@Url.Action("UserEntry", "Home", new { user = item.Name, date = item.VacationDate }, null)'>
                                     @Html.DisplayFor(modelItem => item.Status)
                                 </a>
 

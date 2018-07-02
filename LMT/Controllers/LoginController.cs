@@ -43,16 +43,17 @@ namespace LMT.Controllers
                     return RedirectToAction("Dashboard", "Home");
                 }
             }
-            model.Error = "Your Username Or Password does not match, Please contact Salabh Anand.";
+            model.Error = "Your Username Or Password does not match, Please contact DM.";
             ViewBag.UserList = new SelectList(ls.GetNames());
             return View(model);
         }
 
-        public ActionResult ResetPassword()
+        public ActionResult ResetPassword(string status)
         {
             ResetPassword model = new ResetPassword();
             LoginService ls = new LoginService();
             ViewBag.UserList = new SelectList(ls.GetNames());
+            ViewBag.Status = status;
             model.UserName = "";
             return View(model);
         }
@@ -60,9 +61,17 @@ namespace LMT.Controllers
         public ActionResult ResetPassword(ResetPassword model)
         {
             LoginService ls = new LoginService();
-            ls.ResetPassword(model);
+            string status = "";
 
-            return RedirectToAction("Login");
+            status = ls.ResetPassword(model);
+            if(status == "Password Reset Successfull")
+            {
+                return RedirectToAction("ResetPassword", new { status = status });
+            }
+            else
+            {
+                return RedirectToAction("ResetPassword",new { status = status});
+            }
         }
         public ActionResult Logout()
         {

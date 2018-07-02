@@ -48,6 +48,8 @@ C:\Users\IBM_ADMIN\Desktop\VSWorkSpace\LMT\LMT\bin\System.Web.Webpages.Deploymen
 C:\Users\IBM_ADMIN\Desktop\VSWorkSpace\LMT\LMT\bin\System.Web.Webpages.Razor.xml
 C:\Users\IBM_ADMIN\Desktop\VSWorkSpace\LMT\LMT\bin\System.Web.Helpers.xml
 C:\Users\IBM_ADMIN\Desktop\VSWorkSpace\LMT\LMT\bin\System.Web.Mvc.xml
-C:\Users\IBM_ADMIN\Desktop\VSWorkSpace\LMT\LMT\obj\Debug\LMT.csprojResolveAssemblyReference.cache
 C:\Users\IBM_ADMIN\Desktop\VSWorkSpace\LMT\LMT\obj\Debug\LMT.dll
 C:\Users\IBM_ADMIN\Desktop\VSWorkSpace\LMT\LMT\obj\Debug\LMT.pdb
+C:\Users\IBM_ADMIN\Desktop\VSWorkSpace\LMT\LMT\obj\Debug\LMT.csprojResolveAssemblyReference.cache
+C:\Users\IBM_ADMIN\Desktop\VSWorkSpace\LMT\LMT\bin\EPPlus.dll
+C:\Users\IBM_ADMIN\Desktop\VSWorkSpace\LMT\LMT\bin\EPPlus.xml

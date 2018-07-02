@@ -7,6 +7,12 @@
 <div class="center_div">
     <div class="row">
         <div class="col-md-8"><h2 style="text-align:center;">Dashboard</h2></div>
+        @if (Session["Role"].ToString() == "DM" || Session["Role"].ToString() == "SDM")
+        {
+            <div class="col-md-0" style="margin-top:15px;">
+                <input type="button" value="Get Reports" onclick="window.location.href = '@Url.Action("GetReports","Report")'" />
+            </div>
+        }
         @if (Session["Role"].ToString() == "DM")
         {
             <div class="col-md-1" style="margin-top:15px;">

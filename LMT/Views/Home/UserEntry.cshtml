@@ -5,9 +5,8 @@
 }
 <div class="container center_div" style="width:80%">
     <div class="col-md-10"><h2 style="text-align:center;">User Entry</h2></div>
-   
     @if (Session["LoggedIn"] != null)
-    {
+    {  
         <div class="col-md-offset-2" style="margin-top:15px;">
             <input type="button" value="Logout" onclick="window.location.href = '@Url.Action("Logout","Login")'" />
         </div>
@@ -43,8 +42,13 @@
             </div>
 
         </div>
+        <div class="col-md-4">
+            <a href="@Url.Action("Dashboard","Home")">Back To Dashboard</a>
+        </div>
+        
         if (Session["Role"].ToString() == "USER")
         {
+
             <div class="form-group">
                 <div class="col-md-offset-10 col-md-2">
                     <input type="submit" value="Submit" class="btn btn-default" />
@@ -111,22 +115,24 @@
                 }
             });
             $('#WeekendSelected').change(function () {
+                @ViewBag.Result = "";
                 var val = $(this).val();
-                var name = $.trim($('#Name').val()).replace(" ", "%20");
-                $('#partial-view').load("/Home/PartialUserEntry?user=" + name + "&date=" + val);
+                var name = $.trim($('#Name').val()).replace(/ /g, "%20");
+                var url = '@Url.Action("PartialUserEntry", "Home")';
+                $('#partial-view').load(url+"?user=" + name + "&date=" + val);
             });
 
             $('#LeaveStatus').change(function () {
                 var weekend = $('#WeekendSelected').val();
                 var val = $(this).val();
-                var name = $.trim($('#Name').val()).replace(" ", "%20");
+                var name = $.trim($('#Name').val()).replace(/ /g, "%20");
                 var url = '@Url.Action("ApproveReject","Home")';
                 window.location.href = url+"?user=" + name + "&date=" + weekend + "&type=LEAVE&act=" + val;
             });
             $('#StandByStatus').change(function () {
                 var weekend = $('#WeekendSelected').val();
                 var val = $(this).val();
-                var name = $.trim($('#Name').val()).replace(" ", "%20");
+                var name = $.trim($('#Name').val()).replace(/ /g, "%20");
                 var url = '@Url.Action("ApproveReject","Home")';
                 window.location.href = url+"?user=" + name + "&date=" + weekend + "&type=STANDBY&act=" + val;
             });
@@ -134,7 +140,7 @@
             $('#WFHStatus').change(function () {
                 var weekend = $('#WeekendSelected').val();
                 var val = $(this).val();
-                var name = $.trim($('#Name').val()).replace(" ", "%20");
+                var name = $.trim($('#Name').val()).replace(/ /g, "%20");
                 var url = '@Url.Action("ApproveReject","Home")';
                 window.location.href = url+"?user=" + name + "&date=" + weekend + "&type=WFH&act=" + val;
             });
@@ -142,7 +148,7 @@
             $('#SecondShiftStatus').change(function () {
                 var weekend = $('#WeekendSelected').val();
                 var val = $(this).val();
-                var name = $.trim($('#Name').val()).replace(" ", "%20");
+                var name = $.trim($('#Name').val()).replace(/ /g, "%20");
                 var url = '@Url.Action("ApproveReject","Home")';
                 window.location.href = url+"?user=" + name + "&date=" + weekend + "&type=SECONDSHIFT&act=" + val;
             });

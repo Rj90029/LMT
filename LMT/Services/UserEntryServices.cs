@@ -254,7 +254,7 @@ namespace LMT.Services
             return userEntryPartial.AvailableStandByItems;
         }
 
-        public void InsertLeaves(FormCollection fc, OleDbConnection con)
+        public string InsertLeaves(FormCollection fc, OleDbConnection con)
         {
             userentryTableAdapter.Fill(context.USERENTRY);
             employeeTableAdapter.Fill(context.EMPLOYEE);
@@ -270,120 +270,130 @@ namespace LMT.Services
                       select e.EMP_ID;
             string emp_id = emp.FirstOrDefault<string>();
             DateTime dt = DateTime.ParseExact(weekend, "d/M/yyyy", CultureInfo.InvariantCulture);
-            if (fc["PostedLeaveItem.ItemIds"] != null && fc["PostedLeaveItem.ItemIds"] != "")
+            string status = "";
+            try
             {
-                LeaveDate = fc["PostedLeaveItem.ItemIds"].Split(',');
-
-                con.Open();
-                string command = "DELETE From USERENTRY WHERE EMP_ID = '" + emp_id + "' AND WEEKENDDATE = #" + dt.ToShortDateString()+ "# AND VACATIONTYPE = 'LEAVE'";
-                OleDbDataAdapter adp = new OleDbDataAdapter();
-                OleDbCommand cmd = new OleDbCommand(command, con);
-                cmd.ExecuteNonQuery();
-
-                int count = LeaveDate.Count();
-                for (int i = 0; i < count; i++)
+                if (fc["PostedLeaveItem.ItemIds"] != null && fc["PostedLeaveItem.ItemIds"] != "")
                 {
-                    DateTime vac = DateTime.ParseExact(LeaveDate[i], "d/M/yyyy", CultureInfo.InvariantCulture);
-                    userentryTableAdapter.Insert(emp_id, "LEAVE", vac, "PENDING", dt);
+                    LeaveDate = fc["PostedLeaveItem.ItemIds"].Split(',');
+
+                    con.Open();
+                    string command = "DELETE From USERENTRY WHERE EMP_ID = '" + emp_id + "' AND WEEKENDDATE = #" + dt.ToShortDateString() + "# AND VACATIONTYPE = 'LEAVE'";
+                    OleDbDataAdapter adp = new OleDbDataAdapter();
+                    OleDbCommand cmd = new OleDbCommand(command, con);
+                    cmd.ExecuteNonQuery();
+
+                    int count = LeaveDate.Count();
+                    for (int i = 0; i < count; i++)
+                    {
+                        DateTime vac = DateTime.ParseExact(LeaveDate[i], "d/M/yyyy", CultureInfo.InvariantCulture);
+                        userentryTableAdapter.Insert(emp_id, "LEAVE", vac, "PENDING", dt);
+
+                    }
+                    con.Close();
 
                 }
-                con.Close();
-
-            }
-            else
-            {
-                string command = "DELETE From USERENTRY WHERE EMP_ID = '" + emp_id + "' AND WEEKENDDATE = #" + dt.ToShortDateString() + "# AND VACATIONTYPE = 'LEAVE'";
-                con.Open();
-                OleDbDataAdapter adp = new OleDbDataAdapter();
-                OleDbCommand cmd = new OleDbCommand(command, con);
-                cmd.ExecuteNonQuery();
-                con.Close();
-            }
-            if (fc["PostedStandByItem.ItemIds"] != null && fc["PostedStandByItem.ItemIds"] != "")
-            {
-                StandByDate = fc["PostedStandByItem.ItemIds"].Split(',');
-
-                con.Open();
-                string command = "DELETE From USERENTRY WHERE EMP_ID = '" + emp_id + "' AND WEEKENDDATE = #" + dt.ToShortDateString() + "# AND VACATIONTYPE = 'STANDBY'";
-                OleDbDataAdapter adp = new OleDbDataAdapter();
-                OleDbCommand cmd = new OleDbCommand(command, con);
-                cmd.ExecuteNonQuery();
-
-                int count = StandByDate.Count();
-                for (int i = 0; i < count; i++)
+                else
                 {
-                    DateTime vac = DateTime.ParseExact(StandByDate[i], "d/M/yyyy", CultureInfo.InvariantCulture);
-                    userentryTableAdapter.Insert(emp_id, "STANDBY", vac, "PENDING", dt);
-
+                    string command = "DELETE From USERENTRY WHERE EMP_ID = '" + emp_id + "' AND WEEKENDDATE = #" + dt.ToShortDateString() + "# AND VACATIONTYPE = 'LEAVE'";
+                    con.Open();
+                    OleDbDataAdapter adp = new OleDbDataAdapter();
+                    OleDbCommand cmd = new OleDbCommand(command, con);
+                    cmd.ExecuteNonQuery();
+                    con.Close();
                 }
-                con.Close();
-            }
-            else
-            {
-                string command = "DELETE From USERENTRY WHERE EMP_ID = '" + emp_id + "' AND WEEKENDDATE = #" + dt.ToShortDateString() + "# AND VACATIONTYPE = 'STANDBY'";
-                con.Open();
-                OleDbDataAdapter adp = new OleDbDataAdapter();
-                OleDbCommand cmd = new OleDbCommand(command, con);
-                cmd.ExecuteNonQuery();
-                con.Close();
-            }
-            if (fc["PostedWFHItem.ItemIds"] != null && fc["PostedWFHItem.ItemIds"] != "")
-            {
-                WFHDate = fc["PostedWFHItem.ItemIds"].Split(',');
-
-                con.Open();
-                string command = "DELETE From USERENTRY WHERE EMP_ID = '" + emp_id + "' AND WEEKENDDATE = #" + dt.ToShortDateString() + "#AND VACATIONTYPE = 'WFH'";
-                OleDbDataAdapter adp = new OleDbDataAdapter();
-                OleDbCommand cmd = new OleDbCommand(command, con);
-                cmd.ExecuteNonQuery();
-
-                int count = WFHDate.Count();
-                for (int i = 0; i < count; i++)
+                if (fc["PostedStandByItem.ItemIds"] != null && fc["PostedStandByItem.ItemIds"] != "")
                 {
-                    DateTime vac = DateTime.ParseExact(WFHDate[i], "d/M/yyyy", CultureInfo.InvariantCulture);
-                    userentryTableAdapter.Insert(emp_id, "WFH", vac, "PENDING", dt);
+                    StandByDate = fc["PostedStandByItem.ItemIds"].Split(',');
 
+                    con.Open();
+                    string command = "DELETE From USERENTRY WHERE EMP_ID = '" + emp_id + "' AND WEEKENDDATE = #" + dt.ToShortDateString() + "# AND VACATIONTYPE = 'STANDBY'";
+                    OleDbDataAdapter adp = new OleDbDataAdapter();
+                    OleDbCommand cmd = new OleDbCommand(command, con);
+                    cmd.ExecuteNonQuery();
+
+                    int count = StandByDate.Count();
+                    for (int i = 0; i < count; i++)
+                    {
+                        DateTime vac = DateTime.ParseExact(StandByDate[i], "d/M/yyyy", CultureInfo.InvariantCulture);
+                        userentryTableAdapter.Insert(emp_id, "STANDBY", vac, "PENDING", dt);
+
+                    }
+                    con.Close();
                 }
-                con.Close();
-            }
-            else
-            {
-                string command = "DELETE From USERENTRY WHERE EMP_ID = '" + emp_id + "' AND WEEKENDDATE = #" + dt.ToShortDateString() + "# AND VACATIONTYPE = 'WFH'";
-                con.Open();
-                OleDbDataAdapter adp = new OleDbDataAdapter();
-                OleDbCommand cmd = new OleDbCommand(command, con);
-                cmd.ExecuteNonQuery();
-                con.Close();
-            }
-            if (fc["PostedSecondShiftItem.ItemIds"] != null && fc["PostedSecondShiftItem.ItemIds"] != "")
-            {
-                SecondShiftDate = fc["PostedSecondShiftItem.ItemIds"].Split(',');
-
-                con.Open();
-                string command = "DELETE From USERENTRY WHERE EMP_ID = '" + emp_id + "' AND WEEKENDDATE = #" + dt.ToShortDateString() + "# AND VACATIONTYPE = 'SECONDSHIFT'";
-                OleDbDataAdapter adp = new OleDbDataAdapter();
-                OleDbCommand cmd = new OleDbCommand(command, con);
-                cmd.ExecuteNonQuery();
-
-                int count = SecondShiftDate.Count();
-                for (int i = 0; i < count; i++)
+                else
                 {
-                    DateTime vac = DateTime.ParseExact(SecondShiftDate[i], "d/M/yyyy", CultureInfo.InvariantCulture);
-                    userentryTableAdapter.Insert(emp_id, "SECONDSHIFT", vac, "PENDING", dt);
-
+                    string command = "DELETE From USERENTRY WHERE EMP_ID = '" + emp_id + "' AND WEEKENDDATE = #" + dt.ToShortDateString() + "# AND VACATIONTYPE = 'STANDBY'";
+                    con.Open();
+                    OleDbDataAdapter adp = new OleDbDataAdapter();
+                    OleDbCommand cmd = new OleDbCommand(command, con);
+                    cmd.ExecuteNonQuery();
+                    con.Close();
                 }
-                con.Close();
+                if (fc["PostedWFHItem.ItemIds"] != null && fc["PostedWFHItem.ItemIds"] != "")
+                {
+                    WFHDate = fc["PostedWFHItem.ItemIds"].Split(',');
+
+                    con.Open();
+                    string command = "DELETE From USERENTRY WHERE EMP_ID = '" + emp_id + "' AND WEEKENDDATE = #" + dt.ToShortDateString() + "#AND VACATIONTYPE = 'WFH'";
+                    OleDbDataAdapter adp = new OleDbDataAdapter();
+                    OleDbCommand cmd = new OleDbCommand(command, con);
+                    cmd.ExecuteNonQuery();
+
+                    int count = WFHDate.Count();
+                    for (int i = 0; i < count; i++)
+                    {
+                        DateTime vac = DateTime.ParseExact(WFHDate[i], "d/M/yyyy", CultureInfo.InvariantCulture);
+                        userentryTableAdapter.Insert(emp_id, "WFH", vac, "PENDING", dt);
+
+                    }
+                    con.Close();
+                }
+                else
+                {
+                    string command = "DELETE From USERENTRY WHERE EMP_ID = '" + emp_id + "' AND WEEKENDDATE = #" + dt.ToShortDateString() + "# AND VACATIONTYPE = 'WFH'";
+                    con.Open();
+                    OleDbDataAdapter adp = new OleDbDataAdapter();
+                    OleDbCommand cmd = new OleDbCommand(command, con);
+                    cmd.ExecuteNonQuery();
+                    con.Close();
+                }
+                if (fc["PostedSecondShiftItem.ItemIds"] != null && fc["PostedSecondShiftItem.ItemIds"] != "")
+                {
+                    SecondShiftDate = fc["PostedSecondShiftItem.ItemIds"].Split(',');
+
+                    con.Open();
+                    string command = "DELETE From USERENTRY WHERE EMP_ID = '" + emp_id + "' AND WEEKENDDATE = #" + dt.ToShortDateString() + "# AND VACATIONTYPE = 'SECONDSHIFT'";
+                    OleDbDataAdapter adp = new OleDbDataAdapter();
+                    OleDbCommand cmd = new OleDbCommand(command, con);
+                    cmd.ExecuteNonQuery();
+
+                    int count = SecondShiftDate.Count();
+                    for (int i = 0; i < count; i++)
+                    {
+                        DateTime vac = DateTime.ParseExact(SecondShiftDate[i], "d/M/yyyy", CultureInfo.InvariantCulture);
+                        userentryTableAdapter.Insert(emp_id, "SECONDSHIFT", vac, "PENDING", dt);
+
+                    }
+                    con.Close();
+                }
+                else
+                {
+                    string command = "DELETE From USERENTRY WHERE EMP_ID = '" + emp_id + "' AND WEEKENDDATE = #" + dt.ToShortDateString() + "# AND VACATIONTYPE = 'SECONDSHIFT'";
+                    con.Open();
+                    OleDbDataAdapter adp = new OleDbDataAdapter();
+                    OleDbCommand cmd = new OleDbCommand(command, con);
+                    cmd.ExecuteNonQuery();
+                    con.Close();
+                }
+                status = "Request Submitted Successfully!";
             }
-            else
+            catch(Exception ex)
             {
-                string command = "DELETE From USERENTRY WHERE EMP_ID = '" + emp_id + "' AND WEEKENDDATE = #" + dt.ToShortDateString() + "# AND VACATIONTYPE = 'SECONDSHIFT'";
-                con.Open();
-                OleDbDataAdapter adp = new OleDbDataAdapter();
-                OleDbCommand cmd = new OleDbCommand(command, con);
-                cmd.ExecuteNonQuery();
-                con.Close();
+                status = ex.Message;
             }
 
+            return status;
         }
 
         public string GetLeaveStatus(string user, DateTime date)
@@ -427,7 +437,7 @@ namespace LMT.Services
             var res = (from u in context.USERENTRY
                        join e in context.EMPLOYEE
                              on u.EMP_ID equals e.EMP_ID
-                       where e.EMPNAME == user && u.WEEKENDDATE == date && u.VACATIONTYPE == "SecondShift"
+                       where e.EMPNAME == user && u.WEEKENDDATE == date && u.VACATIONTYPE == "SECONDSHIFT"
                        select u.STATUS).FirstOrDefault<string>();
             if (res == null)
             {
@@ -452,23 +462,33 @@ namespace LMT.Services
             return res;
         }
 
-        public void ApproveReject(string user, string date, string type, string act)
+        public string ApproveReject(string user, string date, string type, string act)
         {
             userentryTableAdapter.Fill(context.USERENTRY);
             employeeTableAdapter.Fill(context.EMPLOYEE);
+            string status = "";
+            try
+            {
+                var emp = from e in context.EMPLOYEE
+                          where e.EMPNAME == user
+                          select e.EMP_ID;
+                string emp_id = emp.FirstOrDefault<string>();
+                DateTime dt = DateTime.ParseExact(date, "d/M/yyyy", CultureInfo.InvariantCulture);
+                string con = ConfigurationManager.ConnectionStrings["TrackerConnectionString"].ToString();
+                OleDbConnection conn = new OleDbConnection(con);
+                conn.Open();
+                string command = "UPDATE USERENTRY SET STATUS = '" + act + "' WHERE EMP_ID = '" + emp_id + "' AND WEEKENDDATE = #" + dt.ToShortDateString() + "# AND VACATIONTYPE = '" + type + "'";
+                OleDbCommand cmd = new OleDbCommand(command, conn);
+                cmd.ExecuteNonQuery();
+                conn.Close();
+                status = "Record uodated successfully";
 
-            var emp = from e in context.EMPLOYEE
-                      where e.EMPNAME == user
-                      select e.EMP_ID;
-            string emp_id = emp.FirstOrDefault<string>();
-            DateTime dt = DateTime.ParseExact(date, "d/M/yyyy", CultureInfo.InvariantCulture);
-            string con = ConfigurationManager.ConnectionStrings["TrackerConnectionString"].ToString();
-            OleDbConnection conn = new OleDbConnection(con);
-            conn.Open();
-            string command = "UPDATE USERENTRY SET STATUS = '"+act+"' WHERE EMP_ID = '" + emp_id + "' AND WEEKENDDATE = #" + dt.ToShortDateString() + "# AND VACATIONTYPE = '"+type+"'";
-            OleDbCommand cmd = new OleDbCommand(command, conn);
-            cmd.ExecuteNonQuery();
-
+            }
+            catch (Exception ex)
+            {
+                status = ex.Message;
+            }
+            return status;
         }
     }
 }

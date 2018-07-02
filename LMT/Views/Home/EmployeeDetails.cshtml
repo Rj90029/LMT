@@ -130,7 +130,9 @@
                 </tr>
             </tbody>
         </table>
-
+        <p style="text-align:center">
+            @Html.ActionLink("Back To Dashboard", "Dashboard", "Home")
+        </p>
         <p style="text-align:center">
             @Html.ActionLink("Add", "UpdateEmployee")  |
             @Html.ActionLink("Update", "UpdateEmployee", new { name = Model.Name })
