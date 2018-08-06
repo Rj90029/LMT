@@ -85,7 +85,7 @@ namespace LMT.Controllers
                 sheet.Cells[i + 6, 5].Value = emp[i].Phone;
             }
             excel.Save();
-            return new FilePathResult("~\\Report\\ExportExcelFile.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            return File(filepath, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml", "ExportExcelFile.xlsx");
         }
 
         [HttpPost]
@@ -93,11 +93,11 @@ namespace LMT.Controllers
         {
             ReportServices rs = new ReportServices();
             List<DetailedReport> dr = rs.GetDetailedReport(model);
-            string filepath = Server.MapPath("~/Report/ExportExcelFile.xlsx");
+            string filepath = Server.MapPath("~/Report/DetailedReport.xlsx");
             FileInfo files = new FileInfo(filepath);
             // EPPlus dll is used for ExcelPackage
             ExcelPackage excel = new ExcelPackage(files);
-            var sheet = excel.Workbook.Worksheets.Skip(1).FirstOrDefault(x => x.Name == "DetailedReport");
+            var sheet = excel.Workbook.Worksheets.FirstOrDefault(x => x.Name == "DetailedReport");
             if (sheet == null)
             {
                 sheet = excel.Workbook.Worksheets.Add("DetailedReport");
@@ -152,7 +152,7 @@ namespace LMT.Controllers
                 rnge.Style.Font.Color.SetColor(System.Drawing.Color.Black);
                 rnge.Style.Border.BorderAround(ExcelBorderStyle.Thick);
                 rnge.Style.Fill.PatternType = ExcelFillStyle.Solid;
-                rnge.Style.Fill.BackgroundColor.SetColor(Color.Green);
+                rnge.Style.Fill.BackgroundColor.SetColor(Color.LightGreen);
             }
             sheet.Cells[5, 1].Value = "Employee ID";
             sheet.Cells[5, 2].Value = "Employee Name";
@@ -162,7 +162,7 @@ namespace LMT.Controllers
             {
                 sheet.Cells[6, 2].Value = "No records found!";
                 excel.Save();
-                return new FilePathResult("~\\Report\\ExportExcelFile.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                return File(filepath, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml", "DetailedReport.xlsx");
             }
            
             if (model.UserName != "ALL" && model.StatusSelected != "ALL")
@@ -297,7 +297,7 @@ namespace LMT.Controllers
                 }
             }
             excel.Save();
-            return new FilePathResult("~\\Report\\ExportExcelFile.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            return File(filepath, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml", "DetailedReport.xlsx");
         }
         [HttpPost]
         public JsonResult ShowGrid(DetailedReport model)

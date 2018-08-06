@@ -3,21 +3,25 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <div class="container center_div" style="width:80%">
     <div class="col-md-10"><h2 style="text-align:center;">User Entry</h2></div>
     @if (Session["LoggedIn"] != null)
-    {  
+    {
         <div class="col-md-offset-2" style="margin-top:15px;">
             <input type="button" value="Logout" onclick="window.location.href = '@Url.Action("Logout","Login")'" />
         </div>
     }
-    
 
-    @using (Html.BeginForm("UserEntry", "Home", FormMethod.Post))
+
+    @using (Html.BeginForm("UserEntry", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
         @Html.AntiForgeryToken()
-
-        <div class="col-md-12 UserHead" >
+        @Html.Hidden("hdnLeaveStatus")
+        @Html.Hidden("hdnWFHStatus")
+        @Html.Hidden("hdnStandByStatus")
+        @Html.Hidden("hdnSecondShiftStatus")
+        <div class="col-md-12 UserHead">
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             <div class="col-md-6">
                 @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-3" })
@@ -34,6 +38,26 @@
                     @Html.ValidationMessageFor(model => model.Weekend, "", new { @class = "text-danger" })
                 </div>
             </div>
+            <div class="modal fade bs-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+
+                            <!-- Wrapper for slides -->
+                            <div class="carousel-inner">
+
+                            </div>
+                            <!-- Controls -->
+                            <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                                <span class="glyphicon glyphicon-chevron-left"></span>
+                            </a>
+                            <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                                <span class="glyphicon glyphicon-chevron-right"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         </div>
         <div class="form-group">
@@ -42,116 +66,237 @@
             </div>
 
         </div>
+
         <div class="col-md-4">
             <a href="@Url.Action("Dashboard","Home")">Back To Dashboard</a>
         </div>
-        
+
         if (Session["Role"].ToString() == "USER")
         {
 
             <div class="form-group">
-                <div class="col-md-offset-10 col-md-2">
-                    <input type="submit" value="Submit" class="btn btn-default" />
+                <div class="col-md-offset-4 col-md-2">
+                    <input id="btnSubmit" type="submit" value="Submit" class="btn btn-default" />
                 </div>
             </div>
         }
-
-
-
     }
-   
-    </div>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            var user = "@Session["ROLE"]";
-            if (user == "USER") {
-                $('#LeaveStatus').attr('disabled', 'disabled');
-                $('#StandByStatus').attr('disabled', 'disabled');
-                $('#WFHStatus').attr('disabled', 'disabled');
-                $('#SecondShiftStatus').attr('disabled', 'disabled');
-            } else {
-                var sel1 = $('#LeaveStatus').val();
-                var sel2 = $('#StandByStatus').val();
-                var sel3 = $('#WFHStatus').val();
-                var sel4 = $('#SecondShiftStatus').val();
-                if (sel1 == "APPROVED" || sel1 == "REJECTED") {
-                    $('#LeaveStatus').attr('disabled', 'disabled');
-                }
-                if (sel2 == "APPROVED" || sel2 == "REJECTED") {
-                    $('#StandByStatus').attr('disabled', 'disabled');
-                }
-                if (sel3 == "APPROVED" || sel3 == "REJECTED") {
-                    $('#WFHStatus').attr('disabled', 'disabled');
-                }
-                if (sel4 == "APPROVED" || sel4 == "REJECTED") {
-                    $('#SecondShiftStatus').attr('disabled', 'disabled');
-                }
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#hdnLeaveStatus').val($('#LeaveStatus').val())
+        $('#hdnWFHStatus').val($('#WFHStatus').val())
+        $('#hdnStandByStatus').val($('#StandByStatus').val())
+        $('#hdnSecondShiftStatus').val($('#SecondShiftStatus').val())
+        var user = "@Session["ROLE"]";
+        if (user == "USER") {
+            $('#LeaveStatus').attr('disabled', 'disabled');
+            $('#StandByStatus').attr('disabled', 'disabled');
+            $('#WFHStatus').attr('disabled', 'disabled');
+            $('#SecondShiftStatus').attr('disabled', 'disabled');
+            if ($('#SecondShiftStatus').val() == 'APPROVED') {
+                $('#FileUpload').hide();
             }
-            $('input[name = "PostedLeaveItem.ItemIds"]').each(function (i, index) {
-                var val = $('#LeaveStatus').val();
-                if (val == "APPROVED" || val == "REJECTED") {
-                    $(this).attr('disabled', 'disabled');
-                }
-            });
-
-            $('input[name = "PostedStandByItem.ItemIds"]').each(function (i, index) {
-                var val = $('#StandByStatus').val();
-                if (val == "APPROVED" || val == "REJECTED") {
-                    $(this).attr('disabled', 'disabled');
-                }
-            });
-
-            $('input[name = "PostedWFHItem.ItemIds"]').each(function (i, index) {
-                var val = $('#WFHStatus').val();
-                if (val == "APPROVED" || val == "REJECTED") {
-                    $(this).attr('disabled', 'disabled');
-                }
-            });
-
-            $('input[name = "PostedSecondShiftItem.ItemIds"]').each(function (i, index) {
-                var val = $('#SecondShiftStatus').val();
-                if (val == "APPROVED" || val == "REJECTED") {
-                    $(this).attr('disabled', 'disabled');
-                }
-            });
-            $('#WeekendSelected').change(function () {
-                @ViewBag.Result = "";
-                var val = $(this).val();
-                var name = $.trim($('#Name').val()).replace(/ /g, "%20");
-                var url = '@Url.Action("PartialUserEntry", "Home")';
-                $('#partial-view').load(url+"?user=" + name + "&date=" + val);
-            });
-
-            $('#LeaveStatus').change(function () {
-                var weekend = $('#WeekendSelected').val();
-                var val = $(this).val();
-                var name = $.trim($('#Name').val()).replace(/ /g, "%20");
-                var url = '@Url.Action("ApproveReject","Home")';
-                window.location.href = url+"?user=" + name + "&date=" + weekend + "&type=LEAVE&act=" + val;
-            });
-            $('#StandByStatus').change(function () {
-                var weekend = $('#WeekendSelected').val();
-                var val = $(this).val();
-                var name = $.trim($('#Name').val()).replace(/ /g, "%20");
-                var url = '@Url.Action("ApproveReject","Home")';
-                window.location.href = url+"?user=" + name + "&date=" + weekend + "&type=STANDBY&act=" + val;
-            });
-
-            $('#WFHStatus').change(function () {
-                var weekend = $('#WeekendSelected').val();
-                var val = $(this).val();
-                var name = $.trim($('#Name').val()).replace(/ /g, "%20");
-                var url = '@Url.Action("ApproveReject","Home")';
-                window.location.href = url+"?user=" + name + "&date=" + weekend + "&type=WFH&act=" + val;
-            });
-
-            $('#SecondShiftStatus').change(function () {
-                var weekend = $('#WeekendSelected').val();
-                var val = $(this).val();
-                var name = $.trim($('#Name').val()).replace(/ /g, "%20");
-                var url = '@Url.Action("ApproveReject","Home")';
-                window.location.href = url+"?user=" + name + "&date=" + weekend + "&type=SECONDSHIFT&act=" + val;
-            });
+            if ($('#StandByStatus').val() == 'APPROVED') {
+                $('#FileUpload1').hide();
+            }
+        } else {
+            var sel1 = $('#LeaveStatus').val();
+            var sel2 = $('#StandByStatus').val();
+            var sel3 = $('#WFHStatus').val();
+            var sel4 = $('#SecondShiftStatus').val();
+            if (sel1 == "APPROVED" || sel1 == "REJECTED") {
+                $('#LeaveStatus').attr('disabled', 'disabled');
+            }
+            if (sel2 == "APPROVED" || sel2 == "REJECTED") {
+                $('#StandByStatus').attr('disabled', 'disabled');
+            }
+            if (sel3 == "APPROVED" || sel3 == "REJECTED") {
+                $('#WFHStatus').attr('disabled', 'disabled');
+            }
+            if (sel4 == "APPROVED" || sel4 == "REJECTED") {
+                $('#SecondShiftStatus').attr('disabled', 'disabled');
+            }
+        }
+        $('input[name = "PostedLeaveItem.ItemIds"]').each(function (i, index) {
+            var val = $('#LeaveStatus').val();
+            if (val == "APPROVED" || val == "REJECTED") {
+                $(this).attr('readonly', true);
+            }
         });
 
-    </script>
+        $('input[name = "PostedStandByItem.ItemIds"]').each(function (i, index) {
+            var val = $('#StandByStatus').val();
+            if (val == "APPROVED" || val == "REJECTED") {
+                $(this).attr('readonly', true);
+            }
+        });
+
+        $('input[name = "PostedWFHItem.ItemIds"]').each(function (i, index) {
+            var val = $('#WFHStatus').val();
+            if (val == "APPROVED" || val == "REJECTED") {
+                $(this).attr('readonly', true);
+            }
+        });
+
+        $('input[name = "PostedSecondShiftItem.ItemIds"]').each(function (i, index) {
+            var val = $('#SecondShiftStatus').val();
+            if (val == "APPROVED" || val == "REJECTED") {
+                $(this).attr('readonly', true);
+            }
+        });
+        $('#WeekendSelected').change(function () {
+
+            var val = $(this).val();
+            var name = $.trim($('#Name').val()).replace(/ /g, "%20");
+            var url = '@Url.Action("PartialUserEntry", "Home")';
+            $('#partial-view').load(url + "?user=" + name + "&date=" + val);
+        });
+
+        $('#LeaveStatus').change(function () {
+            var weekend = $('#WeekendSelected').val();
+            var val = $(this).val();
+            var name = $.trim($('#Name').val()).replace(/ /g, "%20");
+            var url = '@Url.Action("ApproveReject","Home")';
+            window.location.href = url + "?user=" + name + "&date=" + weekend + "&type=LEAVE&act=" + val;
+        });
+        $('#StandByStatus').change(function () {
+            var weekend = $('#WeekendSelected').val();
+            var val = $(this).val();
+            var name = $.trim($('#Name').val()).replace(/ /g, "%20");
+            var url = '@Url.Action("ApproveReject","Home")';
+            window.location.href = url + "?user=" + name + "&date=" + weekend + "&type=STANDBY&act=" + val;
+        });
+
+        $('#WFHStatus').change(function () {
+            var weekend = $('#WeekendSelected').val();
+            var val = $(this).val();
+            var name = $.trim($('#Name').val()).replace(/ /g, "%20");
+            var url = '@Url.Action("ApproveReject","Home")';
+            window.location.href = url + "?user=" + name + "&date=" + weekend + "&type=WFH&act=" + val;
+        });
+
+        $('#SecondShiftStatus').change(function () {
+            var weekend = $('#WeekendSelected').val();
+            var val = $(this).val();
+            var name = $.trim($('#Name').val()).replace(/ /g, "%20");
+            var url = '@Url.Action("ApproveReject","Home")';
+            window.location.href = url + "?user=" + name + "&date=" + weekend + "&type=SECONDSHIFT&act=" + val;
+        });
+
+        $(':checkbox[readonly="readonly"]').click(function () {
+            return false;
+        });
+
+        $('#FileUpload').click(function () {
+            alert("Please select both ILC and Work Day Screenshots.")
+            $('#dvUploadSS').text("");
+        });
+        $('#FileUpload1').click(function () {
+            alert("Please select both ILC and Work Day Screenshots.")
+            $('#dvUploadSB').text("");
+        });
+        // File Upload for Second Shift
+        $('#ancScreenshots').click(function () {
+            var params = {
+                Name: $('#Name').val(),
+                WeekendSelected: $('#WeekendSelected').val()
+            };
+            $.ajax({
+                url: '@Url.Action("ViewImagesSS","Home")',
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(params),
+                dataType: "json",
+                success: function (data) {
+                    var append = '';
+                    for (var i = 0; i < data.path.length; i++) {
+                        if (i == 0) {
+                            append = '<div class="item active">';
+                            append += '<img class="img-responsive" src="' + data.path[i] + '">';
+                            append += '<div class="carousel-caption">' + data.path[i].replace('Images', '').replace(/_/g, '/') + '</div></div>';
+                        } else {
+                            append += '<div class="item">';
+                            append += '<img class="img-responsive" src="' + data.path[i] + '">';
+                            append += '<div class="carousel-caption">' + data.path[i].replace('Images', '').replace(/_/g, '/') + '</div></div>';
+                        }
+                    }
+                    if (data.path.length == 0) {
+                        alert('No screenshots were uploaded.')
+                    } else {
+                        $('.carousel-inner').html(append);
+                        $('#myModal').modal('show');
+                    }
+                },
+                error: function (result) {
+                    alert("Some error has occured!");
+                }
+            });
+        });
+        //File Upload for Stand By
+        $('#ancScreenshots1').click(function () {
+            var params = {
+                Name: $('#Name').val(),
+                WeekendSelected: $('#WeekendSelected').val()
+            };
+            $.ajax({
+                url: '@Url.Action("ViewImagesSB","Home")',
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(params),
+                dataType: "json",
+                success: function (data) {
+                    var append = '';
+                    for (var i = 0; i < data.path.length; i++) {
+                        if (i == 0) {
+                            append = '<div class="item active">';
+                            append += '<img class="img-responsive" src="' + data.path[i] + '">';
+                            append += '<div class="carousel-caption">' + data.path[i].replace('Images', '').replace(/_/g, '/') + '</div></div>';
+                        } else {
+                            append += '<div class="item">';
+                            append += '<img class="img-responsive" src="' + data.path[i] + '">';
+                            append += '<div class="carousel-caption">' + data.path[i].replace('Images', '').replace(/_/g, '/') + '</div></div>';
+                        }
+                    }
+                    if (data.path.length == 0) {
+                        alert('No screenshots were uploaded.')
+                    } else {
+                        $('.carousel-inner').html(append);
+                        $('#myModal').modal('show');
+                    }
+                },
+                error: function (result) {
+                    alert("Some error has occured!");
+                }
+            });
+        });
+        $('#btnSubmit').click(function (e) {
+            if ($('#FileUpload1')[0].files.length > 4) {
+                $('#dvUploadSB').text("Maximum four attachments are allowed");
+                e.preventDefault();
+                return;
+            }
+            if ($('#FileUpload')[0].files.length > 4) {
+                $('#dvUploadSS').text("Maximum four attachments are allowed");
+                e.preventDefault();
+                return;
+            }
+            var ext = $('#FileUpload1').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['png', 'jpg', 'jpeg','']) == -1) {
+                $('#dvUploadSB').text("Please upload in one of these formats ('png','jpeg','jpg')");
+                e.preventDefault();
+                return;
+            }
+            var ext = $('#FileUpload').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['png', 'jpg', 'jpeg','']) == -1) {
+                $('#dvUploadSS').text("Please upload in one of these formats ('png','jpeg','jpg')");
+                e.preventDefault();
+                return;
+            }
+
+        });
+
+    });
+</script>

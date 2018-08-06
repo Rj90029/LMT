@@ -4,10 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Data.OleDb;
 using System.Globalization;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-
+using System.Security.Permissions;
+using System.Web;
+using System.Drawing;
+using System.IO;
 namespace LMT.Controllers
 {
     public class HomeController : SecureController
@@ -71,9 +72,9 @@ namespace LMT.Controllers
         }
 
 
-      
 
-        public ActionResult UserEntry(string user, string date,string status)
+
+        public ActionResult UserEntry(string user, string date, string status)
         {
             UserEntryServices userEntryServices = new UserEntryServices();
             UserEntry userEntry = new UserEntry();
@@ -116,12 +117,110 @@ namespace LMT.Controllers
             return View(userEntry);
         }
         [HttpPost]
-        public ActionResult UserEntry(FormCollection fc)
+        public ActionResult UserEntry(System.Web.Mvc.FormCollection fc, HttpPostedFileBase[] FileUpload,HttpPostedFileBase[] FileUpload1)
         {
             UserEntryServices userEntryServices = new UserEntryServices();
-            OleDbConnection con = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;" + "Data Source=" + Server.MapPath("~/App_Data/Tracker.accdb"));
-            string status = userEntryServices.InsertLeaves(fc, con);
-            return RedirectToAction("UserEntry", new { user = fc["Name"].Trim(), date = fc["WeekendSelected"],status= status });
+            string status = "";
+            try
+            {
+                if (FileUpload.Length>0 && FileUpload[0]!=null)
+                {
+                    var fileName = new string[FileUpload.Length];
+                    var ext = new string[FileUpload.Length];
+                    var name = new string[FileUpload.Length];
+                    var myFile = new string[FileUpload.Length];
+                    var path = new string[FileUpload.Length];
+                    for(int i = 0; i < FileUpload.Length; i++)
+                    {
+                        fileName[i] = Path.GetFileName(FileUpload[i].FileName);
+                        ext[i] = Path.GetExtension(FileUpload[0].FileName); 
+                        name[i] = fc["Name"].Trim() + "_" + fc["WeekendSelected"].Replace("/", "") + "_SS"+(i+1);
+                        myFile[i] = name[i] + ext[i];
+                        path[i] = Path.Combine(Server.MapPath("~/Images/"), myFile[i]);
+                        FileUpload[i].SaveAs(path[i]);
+                    }
+                }
+                if (FileUpload1.Length > 0 && FileUpload1[0] != null)
+                {
+                    var fileName = new string[FileUpload1.Length];
+                    var ext = new string[FileUpload1.Length];
+                    var name = new string[FileUpload1.Length];
+                    var myFile = new string[FileUpload1.Length];
+                    var path = new string[FileUpload1.Length];
+                    for (int i = 0; i < FileUpload1.Length; i++)
+                    {
+                        fileName[i] = Path.GetFileName(FileUpload1[i].FileName);
+                        ext[i] = Path.GetExtension(FileUpload1[0].FileName);
+                        name[i] = fc["Name"].Trim() + "_" + fc["WeekendSelected"].Replace("/", "") + "_SB" + (i + 1);
+                        myFile[i] = name[i] + ext[i];
+                        path[i] = Path.Combine(Server.MapPath("~/Images/"), myFile[i]);
+                        FileUpload1[i].SaveAs(path[i]);
+                    }
+                }
+
+                OleDbConnection con = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;" + "Data Source=" + Server.MapPath("~/App_Data/Tracker.accdb"));
+                status = userEntryServices.InsertLeaves(fc, con);
+                return RedirectToAction("UserEntry", new { user = fc["Name"].Trim(), date = fc["WeekendSelected"], status = status });
+
+            }
+            catch(Exception ex)
+            {
+                status = "Files not uploaded successfully.";
+            }
+
+            return RedirectToAction("UserEntry", new { user = fc["Name"].Trim(), date = fc["WeekendSelected"], status = status });
+
+        }
+        [HttpPost]
+        public JsonResult ViewImagesSS(UserEntry model)
+        {
+            var Avdate = model.WeekendSelected.Split('/');
+            var Seldate = DateTime.Parse(Avdate[1] + '/' + Avdate[0] + '/' + Avdate[2]);
+
+            while (Seldate.DayOfWeek != DayOfWeek.Friday)
+            {
+                Seldate =Seldate.AddDays(1);
+            }
+
+            string date = Seldate.Day.ToString() + Seldate.Month.ToString() + Seldate.Year.ToString();
+            int len = Directory.GetFiles(Server.MapPath("~/Images"), model.Name + "_" + date + "_SS*").Length;
+            string[] files = new string[len];
+            string[] pathArray = new string[len];
+            files = Directory.GetFiles(Server.MapPath("~/Images"), model.Name + "_" + date + "_SS*");
+            for(int i = 0; i < len; i++)
+            {
+                pathArray[i] = "../Images/"+ Path.GetFileName(files[i]);
+            }
+            return Json(new {
+                path = pathArray
+            });
+
+        }
+        [HttpPost]
+        public JsonResult ViewImagesSB(UserEntry model)
+        {
+            var Avdate = model.WeekendSelected.Split('/');
+            var Seldate = DateTime.Parse(Avdate[1] + '/' + Avdate[0] + '/' + Avdate[2]);
+
+            while (Seldate.DayOfWeek != DayOfWeek.Friday)
+            {
+                Seldate = Seldate.AddDays(1);
+            }
+
+            string date = Seldate.Day.ToString() + Seldate.Month.ToString() + Seldate.Year.ToString();
+            int len = Directory.GetFiles(Server.MapPath("~/Images"), model.Name + "_" + date + "_SB*").Length;
+            string[] files = new string[len];
+            string[] pathArray = new string[len];
+            files = Directory.GetFiles(Server.MapPath("~/Images"), model.Name + "_" + date + "_SB*");
+            for (int i = 0; i < len; i++)
+            {
+                pathArray[i] = "../Images/" + Path.GetFileName(files[i]);
+            }
+            return Json(new
+            {
+                path = pathArray
+            });
+
         }
         public ActionResult PartialUserEntry(string user, string date)
         {
@@ -161,8 +260,8 @@ namespace LMT.Controllers
             UserEntryServices userEntryServices = new UserEntryServices();
             string status = userEntryServices.ApproveReject(user.Trim(), date, type, act);
             System.Threading.Thread.Sleep(2000);
-            return RedirectToAction("UserEntry", new { user = user.Trim(),date = date,status = status});
+            return RedirectToAction("UserEntry", new { user = user.Trim(), date = date, status = status });
         }
-       
+
     }
 }

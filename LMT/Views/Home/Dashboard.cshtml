@@ -57,16 +57,30 @@
                 {
                     foreach (var item in Model)
                     {
-                        if (Session["Name"].ToString() == item.Name)
+                        if (Session["Role"].ToString() != "SDM")
                         {
-                            <tr class="clickable-row" style="cursor:pointer;background-color:#c0f5f5;">
-                                <td class="user-name">
-                                    @Html.DisplayFor(model => item.Name)
-                                </td>
-                                <td class="contact">
-                                    @Html.DisplayFor(model => item.ContactNumber)
-                                </td>
-                            </tr>
+                            if (Session["Name"].ToString() == item.Name)
+                            {
+                                <tr class="clickable-row" style="cursor:pointer;background-color:#c0f5f5;">
+                                    <td class="user-name">
+                                        @Html.DisplayFor(model => item.Name)
+                                    </td>
+                                    <td class="contact">
+                                        @Html.DisplayFor(model => item.ContactNumber)
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td class="user-name">
+                                        @Html.DisplayFor(model => item.Name)
+                                    </td>
+                                    <td class="contact">
+                                        @Html.DisplayFor(model => item.ContactNumber)
+                                    </td>
+                                </tr>
+                            }
                         }
                         else
                         {

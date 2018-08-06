@@ -3,10 +3,15 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.OleDb;
+using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Web;
 using System.Web.Mvc;
+using System.Windows.Forms;
 
 namespace LMT.Services
 {
@@ -90,7 +95,6 @@ namespace LMT.Services
 
         public List<CheckBoxListItems> GetSelectedWFHDates(string user, DateTime date)
         {
-            //List<KeyValuePair<DateTime, string>> vacationDates = new List<KeyValuePair<DateTime, string>>();
             userentryTableAdapter.Fill(context.USERENTRY);
             employeeTableAdapter.Fill(context.EMPLOYEE);
 
@@ -254,7 +258,7 @@ namespace LMT.Services
             return userEntryPartial.AvailableStandByItems;
         }
 
-        public string InsertLeaves(FormCollection fc, OleDbConnection con)
+        public string InsertLeaves(System.Web.Mvc.FormCollection fc, OleDbConnection con)
         {
             userentryTableAdapter.Fill(context.USERENTRY);
             employeeTableAdapter.Fill(context.EMPLOYEE);
@@ -264,6 +268,11 @@ namespace LMT.Services
             string[] WFHDate;
             string[] SecondShiftDate;
             string name = fc["Name"];
+            string hdn1, hdn2, hdn3, hdn4;
+            hdn1 = fc["hdnLeaveStatus"];
+            hdn2 = fc["hdnStandByStatus"];
+            hdn3 = fc["hdnWFHStatus"];
+            hdn4 = fc["hdnSecondShiftStatus"];
             string weekend = fc["WeekendSelected"];
             var emp = from e in context.EMPLOYEE
                       where e.EMPNAME == name
@@ -287,7 +296,7 @@ namespace LMT.Services
                     for (int i = 0; i < count; i++)
                     {
                         DateTime vac = DateTime.ParseExact(LeaveDate[i], "d/M/yyyy", CultureInfo.InvariantCulture);
-                        userentryTableAdapter.Insert(emp_id, "LEAVE", vac, "PENDING", dt);
+                        userentryTableAdapter.Insert(emp_id, "LEAVE", vac,hdn1 , dt);
 
                     }
                     con.Close();
@@ -305,7 +314,6 @@ namespace LMT.Services
                 if (fc["PostedStandByItem.ItemIds"] != null && fc["PostedStandByItem.ItemIds"] != "")
                 {
                     StandByDate = fc["PostedStandByItem.ItemIds"].Split(',');
-
                     con.Open();
                     string command = "DELETE From USERENTRY WHERE EMP_ID = '" + emp_id + "' AND WEEKENDDATE = #" + dt.ToShortDateString() + "# AND VACATIONTYPE = 'STANDBY'";
                     OleDbDataAdapter adp = new OleDbDataAdapter();
@@ -316,7 +324,7 @@ namespace LMT.Services
                     for (int i = 0; i < count; i++)
                     {
                         DateTime vac = DateTime.ParseExact(StandByDate[i], "d/M/yyyy", CultureInfo.InvariantCulture);
-                        userentryTableAdapter.Insert(emp_id, "STANDBY", vac, "PENDING", dt);
+                        userentryTableAdapter.Insert(emp_id, "STANDBY", vac, hdn2, dt);
 
                     }
                     con.Close();
@@ -344,7 +352,7 @@ namespace LMT.Services
                     for (int i = 0; i < count; i++)
                     {
                         DateTime vac = DateTime.ParseExact(WFHDate[i], "d/M/yyyy", CultureInfo.InvariantCulture);
-                        userentryTableAdapter.Insert(emp_id, "WFH", vac, "PENDING", dt);
+                        userentryTableAdapter.Insert(emp_id, "WFH", vac, hdn3, dt);
 
                     }
                     con.Close();
@@ -372,7 +380,7 @@ namespace LMT.Services
                     for (int i = 0; i < count; i++)
                     {
                         DateTime vac = DateTime.ParseExact(SecondShiftDate[i], "d/M/yyyy", CultureInfo.InvariantCulture);
-                        userentryTableAdapter.Insert(emp_id, "SECONDSHIFT", vac, "PENDING", dt);
+                        userentryTableAdapter.Insert(emp_id, "SECONDSHIFT", vac, hdn4, dt);
 
                     }
                     con.Close();
@@ -481,7 +489,7 @@ namespace LMT.Services
                 OleDbCommand cmd = new OleDbCommand(command, conn);
                 cmd.ExecuteNonQuery();
                 conn.Close();
-                status = "Record uodated successfully";
+                status = "Record updated successfully";
 
             }
             catch (Exception ex)
